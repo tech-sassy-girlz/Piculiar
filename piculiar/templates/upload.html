@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Upload Photos ;){% endblock %}
+{% block style %}
+<style type="text/css">
+body {
+	background-image: url("/static/img/upload_bg.jpg")
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
+	<h3>Upload images here</h3>
+	<input id="images" name="images" type="file" />
+</div>
+{% endblock %}

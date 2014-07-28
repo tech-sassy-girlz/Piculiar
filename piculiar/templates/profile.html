@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block name %}Your Profile{% endblock %}
+{% block style %}
+<style type="text/css">
+label, h1 {
+	font-family: "Courier New Lucida Console", couriers, serif;
+}
+
+body {
+	background-image: url("/static/img/profile_bg.jpg"); 
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="panel panel-default col-md-6 col-md-offset-3">
+	<div class="panel-body">
+		<h1>Your Profile</h1>
+		<form action="/profile" method="POST">
+			<div class="form-group">	
+				<label for="email">Email Address</label>
+				<input name="email"class="form-control"type="email" placeholder="change email">
+			</div>
+
+			<div class="form-group">
+				<label for="username">User Name</label>
+				<input name="username" class="form-control"type:"text" placeholder= "new username"> 
+			</div>
+
+			<button type="submit">Save Changes</button>
+		</form>
+			
+		<form action="profile/password" method="POST">
+			<div class="form-group">
+				<label for="pwd">New Password</label>
+				<input name="pwd" class="form-control" type="password" placeholder="new password">
+			</div>
+			
+			<div class="form-group">
+				<label for="pwd_confirm">Confirm Password</label>
+				<input name="pwd_confirm"class="form-control" type="password" placeholder="confirm password">
+			</div>
+
+			<button type="submit">Change Password</button>
+		</form>
+	</div>
+</div>
+{% endblock %}

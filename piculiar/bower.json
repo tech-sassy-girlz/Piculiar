@@ -1,0 +1,27 @@
+{
+  "name": "piculiar",
+  "version": "0.1.0",
+  "homepage": "https://github.com/tech-sassy-girlz/pic-flick",
+  "authors": [
+    "pori <porialex@gmail.com>"
+  ],
+  "description": "A really simple photo sharing web app.",
+  "main": "app.py",
+  "keywords": [
+    "photo",
+    "sharing"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "static",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.2.0"
+  }
+}

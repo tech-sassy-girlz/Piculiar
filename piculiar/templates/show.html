@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Share Photo{% endblock %}
+{% block style %}
+<style type="text/css">
+body {
+	background-color: tan; 
+}
+
+img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+img{
+	width: 40%;	
+}
+</style>
+{% endblock %}
+{% block content %}
+<h1 class="text-center">Share Photos!</h1>    
+<img src="http://data1.whicdn.com/images/25961862/thumb.jpg">
+
+<div class="panel panel-default col-md-6 col-md-offset-3">
+	<div class="panel-body">
+		<form action="#" method="POST" class="text-center">
+				<label for="email">email</label> 
+				<input name="email" type="email" /> 
+				<button class= "btn btn-default" type="submit">Share</button>
+		</form>
+	</div>
+</div>
+{% endblock %}

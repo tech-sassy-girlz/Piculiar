@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}Share Photo{% endblock %}
+{% block style %}
+<style type="text/css">
+body {
+	background-color: tan; 
+}
+
+img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+img{
+	width: 40%;	
+}
+</style>
+{% endblock %}
+{% block content %}
+<h1 class="text-center">Photo Gallery</h1>    
+<a href="#">
+	<img src="http://data1.whicdn.com/images/25961862/thumb.jpg">
+</a>
+<a href="#">
+	<img src="http://www.vpfunworld.com/wp-content/uploads/2014/03/photography-wallpaper-tumblr-8-250x166.jpg">
+</a>
+<a href="#">
+	<img src="https://lh5.googleusercontent.com/-SdTsOTBIgXI/UoXyIM9cgoI/AAAAAAAAHDY/eX-ppnSA44c/s500-no/2013+-+1">
+</a>
+{% endblock %}

@@ -1,0 +1,10 @@
+jquery/
+bootstrap/
+
+.DS_Store
+
+*.pyc
+
+*~
+*.swp
+*.swo

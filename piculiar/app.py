@@ -1,10 +1,50 @@
 import pymysql
 
-from flask import Flask, session, redirect, url_for, escape, request, render_template
+from flask import Flask, g, session, redirect, url_for, escape, request, render_template
 app = Flask(__name__)
-db = pymysql.connect(host="localhost", db="pic_flick", user="root", passwd="Password01")
 
-app.secret_key = "C0d3_Camp_13_aw3s0m3!x"
+app.secret_key = "C0d3_Camp_13_aw3s0m3!x" # For sessions
+
+def connect_db():
+	"""Connect to the local database"""
+	# TODO: load database.json config
+	db = pymysql.connect(host="localhost", db="pic_flick", user="root", passwd="Password01")
+	return db
+
+def init_db():
+	# TODO: Initialize database schema
+	pass
+
+def get_db():
+	"""Creates a new database if none exists and returns the connection"""
+	if not hasattr(g, "mysql_db"):
+		g.mysql_db = connect_db()
+	return g.mysql_db
+
+def execute(sql, params=None):
+	"""Execute a non-query statement"""
+	cursor = get_db().cursor()
+
+	return cursor.execute(sql, params)
+
+def query(sql, params=None):
+	"""Get queried data"""
+	cursor = get_db().cursor()
+	cursor.execute(sql, params)
+
+	return cursor.fetchall()
+
+def fetch(sql, params=None):
+	"""Gets one row of data"""
+	cursor = get_db().cursor()
+	cursor.execute(sql, params)
+
+	return cursor.fetchone()
+
+@app.teardown_appcontext
+def close_db(err):
+	if hasattr(g, "mysql_db"):
+		g.mysql_db.close()
 
 @app.route("/")
 def home():

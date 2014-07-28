@@ -1,4 +1,4 @@
-# Pic Flick
+# Piculiar
 
 A really simple photo sharing web app.
 

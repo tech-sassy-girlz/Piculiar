@@ -1,7 +1,7 @@
 {
   "name": "piculiar",
   "version": "0.1.0",
-  "homepage": "https://github.com/tech-sassy-girlz/pic-flick",
+  "homepage": "https://github.com/tech-sassy-girlz/piculiar",
   "authors": [
     "pori <porialex@gmail.com>"
   ],
@@ -11,7 +11,7 @@
     "photo",
     "sharing"
   ],
-  "license": "MIT",
+  "license": "BSD",
   "private": true,
   "ignore": [
     "**/.*",

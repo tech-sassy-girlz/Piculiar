@@ -17,19 +17,13 @@ def signup():
 		
 		if name != "" and email != "" and pwd != "" and pwd == confirm_pwd:
 			# SELECT * FROM users WHERE email LIKE ? LIMIT 1
-			# INSERT INTO users (name, email, pwd) VALUES (?, ?, md5(?));
-			sql = "INSERT INTO users (name, email, pwd) VALUES (%s, %s, md5(%s));" 
-			data = (name, email, pwd)
-			cursor = db.cursor()
+			create_user_sql = "INSERT INTO users (name, email, pwd) VALUES (%s, %s, md5(%s));" 
+			params = (name, email, pwd)
 
-			cursor.execute(sql, data)
+			execute(create_user_sql, params)
 
 			select_new_user = "SELECT MAX(id) FROM users;"
-			new_user_cursor = db.cursor()
-
-			new_user_cursor.execute(select_new_user)
-
-			result = new_user_cursor.fetchone()
+			result = fetch(sql) #new_user_cursor.fetchone()
 
 			session["user_id"] = result[0] 
 				
@@ -46,13 +40,10 @@ def login():
 		pwd = request.form["pwd"]
 		
 		if email != "" and pwd != "":
-			# SELECT id FROM users WHERE email LIKE ? AND pwd LIKE md5(?) LIMIT 1;
 			sql = "SELECT id FROM users WHERE email LIKE %s AND pwd LIKE md5(%s) LIMIT 1;" 
 			params = (email, pwd)
-			cursor = db.cursor()
+			result = fetch(sql, params) 
 
-			cursor.execute(sql, params)
-			result = cursor.fetchone()
 			session["user_id"] = result[0]
 
 			return redirect(url_for("profile")) 
@@ -65,17 +56,13 @@ def logout():
 	if request.method == "POST":
 		# Destroy user session
 		session.pop("user_id", None)
+
 		return redirect(url_for("login"))
 
 @app.route("/profile", methods=["GET", "POST", "DELETE"])
 def profile():
-	# SELECT * FROM users WHERE id=?
 	select_user_sql = "SELECT name, email FROM users WHERE id=%s"
-	cursor = db.cursor()
-	
-	cursor.execute(select_user_sql, session["user_id"])
-	
-	user_info = cursor.fetchone() # 0: name, 1: email
+	user_info = fetch(select_user_sql) # 0: name, 1: email
 	
 	if request.method == "POST":
 		# Update user information
@@ -84,22 +71,19 @@ def profile():
 		
 		if name != "" and email != "":
 			# SELECT * FROM users WHERE email LIKE ? LIMIT 1
-			# UPDATE users SET name=?, email=? WHERE id=?;
 			update_user_sql = "UPDATE users SET name=%s, email=%s WHERE id=%s;"
 			update_user_params = (name, email, session["user_id"])
-			update_cursor = db.cursor()
 			
-			update_cursor.execute(update_user_sql, update_user_params)
+			execute(update_user_sql, update_user_params)
 			
 			return redirect(url_for("profile"))
 	elif request.method == "DELETE":
 		# Delete user information (and images)
 		# DELETE FROM images WHERE user_id=?;
-		# DELETE FROM users WHERE id=?;
 		delete_user_sql = "DELETE FROM users WHERE id=%s;"
-		delete_user_cursor = db.cursor()
 		
-		delete_user_cursor.execute(delete_user_sql, session["user_id"])
+		execute(delete_user_sql, session["user_id"])
+
 		session.pop("user_id", None)
 		
 		return redirect(url_for("signup"))
@@ -118,9 +102,8 @@ def password():
 		if pwd != "" and pwd == confirm_pwd:
 			sql = "UPDATE users SET pwd=md5(%s) WHERE id=%s;"
 			params = (pwd, session["user_id"])
-			cursor = db.cursor()
 						
-			cursor.execute(sql, params)
+			execute(sql, params)
 			
 			return redirect(url_for("profile"))
 		else:
@@ -135,9 +118,8 @@ def upload():
 		sql = """INSERT INTO images (user_id, file_name, year_created, month_created) 
 			VALUES (%s, %s, YEAR(NOW()), MONTHNAME(NOW()));"""		
 		params = (session["user_id"], file_name)
-		cursor = db.cursor()
 		
-		cursor.execute(sql, params)
+		execute(sql, params)
 		
 		return redirect(url_for("gallery"))
 	else:
@@ -148,11 +130,7 @@ def upload():
 def gallery(user_id):
 	# Show image gallery
 	sql = "SELECT * FROM images WHERE user_id=%s;"
-	cursor = db.cursor()
-	
-	cursor.execute(sql, user_id)
-	
-	images = cursor.fetchall()
+	images = query(sql, user_id)
 	
 	return render_template("gallery.html")
 
@@ -162,19 +140,14 @@ def image(user_id, image_id):
 	if request.method == "DELETE":
 		# Delete an image
 		sql = "DELETE FROM images WHERE id=%s;"
-		cursor = db.cursor()
 
-		cursor.execute(sql, image_id)
+		execute(sql, image_id)
 
 		return redirect(url_for("gallery"))
 	else:
 		# Show the specific image
 		sql = "SELECT * FROM images WHERE user_id=%s;"
-		cursor = db.cursor()
-
-		cursor.execute(sql, user_id)
-
-		image = cursor.fetchone()
+		images = query(sql, user_id)
 
 		return render_template("show.html")
 

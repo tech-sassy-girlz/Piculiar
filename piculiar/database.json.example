@@ -1,0 +1,20 @@
+{
+	"production": {
+		"host": "",
+		"db": "",
+		"user": "",
+		"passwd": ""
+	},
+	"development": {
+		"host": "",
+		"db": "",
+		"user": "",
+		"passwd": ""
+	},
+	"test": {
+		"host": "",
+		"db": "",
+		"user": "",
+		"passwd": ""
+	}
+}

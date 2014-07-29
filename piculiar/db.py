@@ -5,13 +5,14 @@ from flask import g
 from piculiar import app
 
 def load_config():
-	db_conf_json = json.load(open("database"))
+	db_conf_json = json.load(open("database.json"))
 	db_conf = db_conf_json["development"]
 
 	if os.getenv("PICULIAR_ENV", "development") == "production":
 		db_conf = db_conf_json["production"]
 		
 	app.config.update(db_conf)
+	db_conf_json.close()
 
 load_config()
 

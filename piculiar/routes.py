@@ -1,6 +1,6 @@
 from flask import session, redirect, url_for, escape, request, render_template
-from piculiar import app
-from piculiar import * 
+from piculiar import app 
+from db import execute, query, fetch
 
 @app.route("/")
 def home():

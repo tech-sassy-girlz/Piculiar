@@ -66,7 +66,7 @@ def profile():
 	
 	if request.method == "POST":
 		# Update user information
-		name = request.form["name"]
+		name = request.form["username"]
 		email = request.form["email"]
 		
 		if name != "" and email != "":
@@ -97,7 +97,7 @@ def password():
 	if request.method == "POST":
 		# Update user password
 		pwd = request.form["pwd"]
-		confirm_pwd = request.form["confirm_pwd"]
+		confirm_pwd = request.form["pwd_confirm"]
 		
 		if pwd != "" and pwd == confirm_pwd:
 			sql = "UPDATE users SET pwd=md5(%s) WHERE id=%s;"

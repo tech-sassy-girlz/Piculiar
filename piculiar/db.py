@@ -1,25 +1,27 @@
 import os
 import json
+import pymysql
 
 from flask import g
 from piculiar import app
 
 def load_config():
-	db_conf_json = json.load(open("database.json"))
+	db_conf_file = open("piculiar/database.json") 
+	db_conf_json = json.load(db_conf_file)
 	db_conf = db_conf_json["development"]
 
 	if os.getenv("PICULIAR_ENV", "development") == "production":
 		db_conf = db_conf_json["production"]
 		
 	app.config.update(db_conf)
-	db_conf_json.close()
+	db_conf_file.close()
 
 load_config()
 
 def connect_db():
 	"""Connect to the local database"""
 	# TODO: load database.json config
-	db = pymysql.connect(host=app.config["host"], db=app.config["db"], user=app.config["user"], passwd=app.config["passwd"])
+	db = pymysql.connect(host=app.config["host"], db=app.config["db"], user=app.config["user"], passwd=app.config["passwd"], autocommit=True)
 	return db
 
 def init_db():

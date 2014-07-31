@@ -23,7 +23,7 @@ def signup():
 			execute(create_user_sql, params)
 
 			select_new_user = "SELECT MAX(id) FROM users;"
-			result = fetch(sql) #new_user_cursor.fetchone()
+			result = fetch(select_new_user)
 
 			session["user_id"] = result[0] 
 				
@@ -36,11 +36,11 @@ def signup():
 def login():
 	if request.method == "POST":
 		# Starting session for user
-		email = request.form["email"]
+		email = request.form["username"]
 		pwd = request.form["pwd"]
 		
 		if email != "" and pwd != "":
-			sql = "SELECT id FROM users WHERE email LIKE %s AND pwd LIKE md5(%s) LIMIT 1;" 
+			sql = "SELECT id FROM users WHERE name LIKE %s AND pwd LIKE md5(%s) LIMIT 1;" 
 			params = (email, pwd)
 			result = fetch(sql, params) 
 
@@ -61,8 +61,8 @@ def logout():
 
 @app.route("/profile", methods=["GET", "POST", "DELETE"])
 def profile():
-	select_user_sql = "SELECT name, email FROM users WHERE id=%s"
-	user_info = fetch(select_user_sql) # 0: name, 1: email
+	select_user_sql = "SELECT name, email FROM users WHERE id=%s;"
+	user_info = fetch(select_user_sql, session["user_id"]) # 0: name, 1: email
 	
 	if request.method == "POST":
 		# Update user information
@@ -89,7 +89,7 @@ def profile():
 		return redirect(url_for("signup"))
 	else:
 		# Show profile information
-		return render_template("profile.html", name=user_info[1], email=user_info[2])
+		return render_template("profile.html", name=user_info[0], email=user_info[1])
 
 # i.e. www.picflick.com/profile/password
 @app.route("/profile/password", methods=["POST"])

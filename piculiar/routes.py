@@ -1,3 +1,5 @@
+import os
+
 from flask import session, redirect, url_for, escape, request, render_template
 from piculiar import app 
 from db import execute, query, fetch
@@ -109,30 +111,54 @@ def password():
 		else:
 			return render_template("profile.html")
 
+def allowed_file(filename):
+	allowed_extensions = set(["jpg", "jpeg", "png", "gif"])
+
+	return '.' in filename and filename.rsplit('.', 1)[1] in allowed_extensions
+
 # i.e. www.picflick.com/upload
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
 	if request.method == "POST":
 		# Upload image to server
-		file_name = None # TODO: upload file name
-		sql = """INSERT INTO images (user_id, file_name, year_created, month_created) 
-			VALUES (%s, %s, YEAR(NOW()), MONTHNAME(NOW()));"""		
-		params = (session["user_id"], file_name)
+		file = request.files["image"]	
+		if file and allowed_file(file.filename):
+			sql = """INSERT INTO images (user_id, file_name, year_created, month_created) 
+				VALUES (%s, %s, YEAR(NOW()), MONTHNAME(NOW()));"""		
+			params = (session["user_id"], file.filename)
 		
-		execute(sql, params)
+			execute(sql, params)
+
+			select_new_image = "SELECT id, year_created, month_created FROM images WHERE user_id=%s ORDER BY id DESC LIMIT 1;"
+			image_info = fetch(select_new_image, session["user_id"])
+			
+			upload_folder = app.config["UPLOAD_FOLDER"]
+			year_folder = upload_folder + "/" + image_info[1]
+			month_folder = year_folder + "/" + image_info[2]
+
+			if not os.path.exists(year_folder):
+				os.makedirs(year_folder)
+			
+			if not os.path.exists(month_folder):
+				os.makedirs(month_folder)
+
+			file.save(os.path.join(month_folder, file.filename))
 		
-		return redirect(url_for("gallery"))
-	else:
-		return render_template("upload.html")
+			return redirect(url_for("gallery", user_id=session["user_id"]))
+
+	return render_template("upload.html")
 
 # i.e. www.picflick.com/gallery/5
 @app.route("/gallery/<user_id>")
 def gallery(user_id):
+	select_user_sql = "SELECT name, email FROM users WHERE id=%s LIMIT 1;"
+	user_info = fetch(select_user_sql, user_id)
+
 	# Show image gallery
-	sql = "SELECT * FROM images WHERE user_id=%s;"
-	images = query(sql, user_id)
-	
-	return render_template("gallery.html")
+	select_images_sql = "SELECT id, file_name, year_created, month_created FROM images WHERE user_id=%s;"
+	images = query(select_images_sql, user_id)
+		
+	return render_template("gallery.html", user_info=user_info, images=images)
 
 # i.e. www.picflick.com/gallery/5/image/42
 @app.route("/gallery/<user_id>/image/<image_id>", methods=["GET", "DELETE"])
